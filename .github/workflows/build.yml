@@ -25,7 +25,7 @@ jobs:
             valhalla_build_admins -c /config/valhalla.json /data/india-latest.osm.pbf &&
             valhalla_build_tiles -c /config/valhalla.json /data/india-latest.osm.pbf &&
             valhalla_build_extract -c /config/valhalla.json -v'
-        env: { VALHALLA_IMAGE: "ghcr.io/valhalla/valhalla:latest" }   # pin by digest after the first green run (S4.2)
+        env: { VALHALLA_IMAGE: "ghcr.io/valhalla/valhalla@sha256:7338fee816f911211fb79e3e7b83f5846257e91b87de649d2e05a44c3948f681" }   # pinned from first green run 2026-10-20 (S4.2); Renovate bumps
       - name: Package
         run: |
           cd data && zstd -19 -T0 valhalla_tiles.tar -o valhalla-india.tar.zst
