@@ -1,0 +1,12 @@
+.env
+.env.*
+!.env.example
+*.dec.*
+*.jks
+*.keystore
+*.p12
+!*.p12.enc
+local.properties
+keystore.properties
+.DS_Store
+.idea/

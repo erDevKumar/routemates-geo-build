@@ -1,0 +1,41 @@
+name: valhalla-india
+on:
+  schedule: [{ cron: "0 20 1 * *" }]   # 1st of month, 01:30 IST
+  workflow_dispatch: {}
+permissions: { contents: read }
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - name: Free disk
+        run: sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /opt/hostedtoolcache/CodeQL && df -h /
+      - name: Download India extract
+        run: |
+          mkdir -p data && cd data
+          curl -fsSLO https://download.geofabrik.de/asia/india-latest.osm.pbf
+          curl -fsSL https://download.geofabrik.de/asia/india-latest.osm.pbf.md5 | md5sum -c -
+      - name: Build tiles
+        run: |
+          docker run --rm -v "$PWD/data:/data" -v "$PWD/config:/config" ${VALHALLA_IMAGE} bash -c '
+            valhalla_build_config --mjolnir-tile-dir /data/valhalla_tiles --mjolnir-tile-extract /data/valhalla_tiles.tar               --mjolnir-timezone /data/valhalla_tiles/timezones.sqlite --mjolnir-admin /data/valhalla_tiles/admins.sqlite               --mjolnir-concurrency 4 > /config/valhalla.json &&
+            valhalla_build_timezones > /data/valhalla_tiles/timezones.sqlite &&
+            valhalla_build_admins -c /config/valhalla.json /data/india-latest.osm.pbf &&
+            valhalla_build_tiles -c /config/valhalla.json /data/india-latest.osm.pbf &&
+            valhalla_build_extract -c /config/valhalla.json -v'
+        env: { VALHALLA_IMAGE: "ghcr.io/valhalla/valhalla:latest" }   # pin by digest after the first green run (S4.2)
+      - name: Package
+        run: |
+          cd data && zstd -19 -T0 valhalla_tiles.tar -o valhalla-india.tar.zst
+          sha256sum valhalla-india.tar.zst > valhalla-india.sha256
+          cp ../config/valhalla.json valhalla.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: valhalla-india
+          path: |
+            data/valhalla-india.tar.zst
+            data/valhalla-india.sha256
+            data/valhalla.json
+          retention-days: 35
+          compression-level: 0
