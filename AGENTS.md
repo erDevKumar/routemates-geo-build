@@ -11,3 +11,5 @@ Infra spec: `Routemates PRD/infra/` (index `00_infrastructure_stack_index.md`). 
 ## Repo rules
 - No secrets in git. Only SOPS ciphertext (`*.enc.*`). gitleaks runs in CI.
 - Legacy V2 repos (`RouteMates`, `RMatesBESBoot`) are reference only. Take the useful parts, the PRD wins, and never copy V2 secrets.
+
+- **Branch rule (user, standing until changed, 2026-10-22):** every change goes to the `development` branch (cut from `main`). No per-WP PRs or feature branches; worktrees allowed for parallel agents but push only to `development`. `main` is untouched until the user decides the merge.
