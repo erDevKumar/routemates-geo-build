@@ -13,3 +13,4 @@ Infra spec: `Routemates PRD/infra/` (index `00_infrastructure_stack_index.md`). 
 - Legacy V2 repos (`RouteMates`, `RMatesBESBoot`) are reference only. Take the useful parts, the PRD wins, and never copy V2 secrets.
 
 - **Branch rule (user, standing until changed, 2026-10-22):** every change goes to the `development` branch (cut from `main`). No per-WP PRs or feature branches; worktrees allowed for parallel agents but push only to `development`. `main` is untouched until the user decides the merge.
+- **CI rule (user, 2026-10-23):** Woodpecker pipelines (CI, integration, staging deploy) run only from `main`; pushes to `development` run nothing. Run the local gates before pushing `development`.
