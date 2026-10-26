@@ -10,3 +10,7 @@ local.properties
 keystore.properties
 .DS_Store
 .idea/
+
+# Local tooling, test output and generated assets
+.code-review-graph/
+.playwright-mcp/
