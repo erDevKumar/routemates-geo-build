@@ -16,6 +16,8 @@ jobs:
           mkdir -p data && cd data
           curl -fsSLO https://download.geofabrik.de/asia/india-latest.osm.pbf
           curl -fsSL https://download.geofabrik.de/asia/india-latest.osm.pbf.md5 | md5sum -c -
+          # P3-GEO: the extract boundary; backend pkg/region/polys/IN.poly must match it (diff on refresh)
+          curl -fsSL -o india.poly https://download.geofabrik.de/asia/india.poly
       - name: Build tiles
         run: |
           docker run --rm -v "$PWD/data:/data" -v "$PWD/config:/config" "${VALHALLA_IMAGE}" bash -c '
@@ -38,5 +40,6 @@ jobs:
             data/valhalla-india.tar.zst
             data/valhalla-india.sha256
             data/valhalla.json
+            data/india.poly
           retention-days: 35
           compression-level: 0
