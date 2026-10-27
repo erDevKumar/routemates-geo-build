@@ -18,6 +18,10 @@ jobs:
           curl -fsSL https://download.geofabrik.de/asia/india-latest.osm.pbf.md5 | md5sum -c -
           # P3-GEO: the extract boundary; backend pkg/region/polys/IN.poly must match it (diff on refresh)
           curl -fsSL -o india.poly https://download.geofabrik.de/asia/india.poly
+      - name: Build state polygons + ghats (backend pkg/region; diff and commit there on refresh)
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq osmium-tool
+          scripts/build-regions.sh data/india-latest.osm.pbf data/regions
       - name: Build tiles
         run: |
           docker run --rm -v "$PWD/data:/data" -v "$PWD/config:/config" "${VALHALLA_IMAGE}" bash -c '
@@ -41,5 +45,6 @@ jobs:
             data/valhalla-india.sha256
             data/valhalla.json
             data/india.poly
+            data/regions
           retention-days: 35
           compression-level: 0
