@@ -14,3 +14,4 @@ keystore.properties
 # Local tooling, test output and generated assets
 .code-review-graph/
 .playwright-mcp/
+__pycache__/
